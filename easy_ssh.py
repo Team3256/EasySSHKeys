@@ -17,7 +17,7 @@ def clone_and_modify_git_config(repo_name: str, passwd: str) -> bool:
             f"git@github.com-{NAME_LOWER}:{repo_name}.git",
             (dr := f"{HOME_DIR}\\Documents\\Github\\{NAME}\\{repo_name.split('/')[1]}"),
         ]
-    ).communicate(input=passwd)
+    ).communicate(input=passwd.encode())
     # Update config
     print(f"{dr=}")
     p2 = subprocess.run(["git", "config", "user.name", NAME], cwd=f"{dr}")
@@ -119,7 +119,8 @@ if (
 Host github.com-{NAME_LOWER}
     Hostname github.com
     User git
-    IdentityFile ~/.ssh/id_rsa_{NAME_LOWER}"""
+    IdentityFile ~/.ssh/id_rsa_{NAME_LOWER}
+"""
         )
 
 # Configure intellij
@@ -127,8 +128,17 @@ input(
     "Configure Intellij to forget your password\nFile > Settings > Appearance & Behavior > System Settings > Passwords\nSelect 'Do not save, forget passwords after restart', then click 'OK'"
 )
 
+# Add github to known_hosts
+if not os.path.isfile(f"{HOME_DIR}\\.ssh\\known_hosts"):
+    with open(f"{HOME_DIR}\\.ssh\\known_hosts", "w") as f:
+        f.write("""\
+github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl
+github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
+github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg=
+""")
+
 # Multi-threaded git clones
-passwd = getpass.getpass("Enter your Github ssh-key password: ")
+password = getpass.getpass("Enter your Github ssh-key password: ")
 
 threads = []
 for repo in {
@@ -137,7 +147,7 @@ for repo in {
     "Team3256/T-ShirtShooter",
     "Team3256/FRC_Programming_2020",
 }:
-    t = threading.Thread(target=clone_and_modify_git_config, args=(repo, passwd))
+    t = threading.Thread(target=clone_and_modify_git_config, args=(repo, password))
     threads.append(t)
     t.start()
 
