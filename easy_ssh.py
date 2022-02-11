@@ -7,6 +7,7 @@ import webbrowser
 from shutil import which
 
 
+
 def clone_and_modify_git_config(repo_name: str, passwd: str) -> bool:
     """Clone a repo into ~/Documents/Github/<name> and modify the git config to include name and email."""
     # Clone the repo
@@ -17,9 +18,8 @@ def clone_and_modify_git_config(repo_name: str, passwd: str) -> bool:
             f"git@github.com-{NAME_LOWER}:{repo_name}.git",
             (dr := f"{HOME_DIR}\\Documents\\Github\\{NAME}\\{repo_name.split('/')[1]}"),
         ]
-    ).communicate(input=passwd.encode())
+    ).communicate()
     # Update config
-    print(f"{dr=}")
     p2 = subprocess.run(["git", "config", "user.name", NAME], cwd=f"{dr}")
     p3 = subprocess.run(["git", "config", "user.email", EMAIL], cwd=f"{dr}")
     return any([p2.returncode, p3.returncode])  # returncode == 0 is success
@@ -38,6 +38,12 @@ while True:
     EMAIL = input("Please enter your Github Email (e.g. dylan@starink.com): ")
     COMPUTER_NAME = "ThonkPad2"
     HOME_DIR = os.getenv("UserProfile")
+    # NAME = "AlexanderHOtt"
+    # REAL_NAME = "Alex Ott"
+    # NAME_LOWER = NAME.lower()
+    # EMAIL = "aott01@protonmail.ch"
+    # COMPUTER_NAME = "ThonkPad2"
+    # HOME_DIR = os.getenv("UserProfile")
 
     s = f"""\
     Name: {NAME}
@@ -138,7 +144,7 @@ github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAA
 """)
 
 # Multi-threaded git clones
-password = getpass.getpass("Enter your Github ssh-key password: ")
+# password = getpass.getpass("Enter your Github ssh-key password: ")
 
 threads = []
 for repo in {
@@ -147,11 +153,12 @@ for repo in {
     "Team3256/T-ShirtShooter",
     "Team3256/FRC_Programming_2020",
 }:
-    t = threading.Thread(target=clone_and_modify_git_config, args=(repo, password))
-    threads.append(t)
-    t.start()
+    # t = threading.Thread(target=clone_and_modify_git_config, args=(repo, password))
+    # threads.append(t)
+    # t.start()
+    clone_and_modify_git_config(repo, "")
 
-[t.join() for t in threads]
+# [t.join() for t in threads]
 
 print(
     "\nRun: Get-Service -Name ssh-agent | Set-Service -StartupType Automatic && Start-Service ssh-agent' as a powershell admin to start ssh-agent"
