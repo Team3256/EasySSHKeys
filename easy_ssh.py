@@ -17,8 +17,9 @@ def clone_and_modify_git_config(repo_name: str, passwd: str) -> bool:
             "clone",
             f"git@github.com-{NAME_LOWER}:{repo_name}.git",
             (dr := f"{HOME_DIR}\\Documents\\Github\\{NAME}\\{repo_name.split('/')[1]}"),
-        ]
-    ).communicate()
+        ],
+        stdin=subprocess.PIPE
+    ).communicate(input=f"{passwd}\n".encode())
     # Update config
     p2 = subprocess.run(["git", "config", "user.name", NAME], cwd=f"{dr}")
     p3 = subprocess.run(["git", "config", "user.email", EMAIL], cwd=f"{dr}")
@@ -32,18 +33,18 @@ if os.name != "nt":
 
 # Get user input
 while True:
-    NAME = input("Please enter your Github Username (e.g. StarDylan): ")
-    REAL_NAME = input("Enter your real name on Github (e.g. Dylan Starink): ")
-    NAME_LOWER = NAME.lower()
-    EMAIL = input("Please enter your Github Email (e.g. dylan@starink.com): ")
-    COMPUTER_NAME = "ThonkPad2"
-    HOME_DIR = os.getenv("UserProfile")
-    # NAME = "AlexanderHOtt"
-    # REAL_NAME = "Alex Ott"
+    # NAME = input("Please enter your Github Username (e.g. StarDylan): ")
+    # REAL_NAME = input("Enter your real name on Github (e.g. Dylan Starink): ")
     # NAME_LOWER = NAME.lower()
-    # EMAIL = "aott01@protonmail.ch"
+    # EMAIL = input("Please enter your Github Email (e.g. dylan@starink.com): ")
     # COMPUTER_NAME = "ThonkPad2"
     # HOME_DIR = os.getenv("UserProfile")
+    NAME = "AlexanderHOtt"
+    REAL_NAME = "Alex Ott"
+    NAME_LOWER = NAME.lower()
+    EMAIL = "aott01@protonmail.ch"
+    COMPUTER_NAME = "ThonkPad2"
+    HOME_DIR = os.getenv("UserProfile")
 
     s = f"""\
     Name: {NAME}
@@ -91,7 +92,6 @@ subprocess.run(["ssh-add", f"{HOME_DIR}\\.ssh\\id_rsa_{NAME_LOWER}"])
 subprocess.run(
     f"type {HOME_DIR}\\.ssh\\id_rsa_{NAME_LOWER}.pub | clip",
     shell=True,
-    stdout=subprocess.DEVNULL,
 )
 print("Public ssh key copied to clipboard\n")
 time.sleep(2)
@@ -144,7 +144,7 @@ github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAA
 """)
 
 # Multi-threaded git clones
-# password = getpass.getpass("Enter your Github ssh-key password: ")
+password = getpass.getpass("Enter your Github ssh-key password: ")
 
 threads = []
 for repo in {
@@ -156,7 +156,7 @@ for repo in {
     # t = threading.Thread(target=clone_and_modify_git_config, args=(repo, password))
     # threads.append(t)
     # t.start()
-    clone_and_modify_git_config(repo, "")
+    clone_and_modify_git_config(repo, password)
 
 # [t.join() for t in threads]
 
