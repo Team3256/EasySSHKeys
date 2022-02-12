@@ -130,7 +130,7 @@ Host github.com-{NAME_LOWER}
 
 # Configure intellij
 input(
-    "Configure Intellij to forget your password\nFile > Settings > Appearance & Behavior > System Settings > Passwords\nSelect 'Do not save, forget passwords after restart', then click 'OK'"
+    "Configure Intellij to forget your password\nFile > Settings > Appearance & Behavior > System Settings > Passwords\nSelect 'Do not save, forget passwords after restart', then click 'OK'\nPress <Enter> to Continue"
 )
 
 # Add github to known_hosts
