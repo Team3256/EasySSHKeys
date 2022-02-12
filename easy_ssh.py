@@ -85,13 +85,12 @@ subprocess.Popen(
 # subprocess.Popen(["ssh-agent", "-s"]).communicate()
 # Add ssh key to ssh-agent
 
-subprocess.run(["ssh-add", f"{HOME_DIR}\\.ssh\\id_rsa_{NAME_LOWER}"])
+# subprocess.run(["ssh-add", f"{HOME_DIR}\\.ssh\\id_rsa_{NAME_LOWER}"])
 
 # Copy public ssh key to clipboard
 subprocess.run(
     f"type {HOME_DIR}\\.ssh\\id_rsa_{NAME_LOWER}.pub | clip",
     shell=True,
-    stdout=subprocess.DEVNULL,
 )
 print("Public ssh key copied to clipboard\n")
 time.sleep(2)
@@ -161,5 +160,5 @@ for repo in {
 # [t.join() for t in threads]
 
 print(
-    "\nRun: Get-Service -Name ssh-agent | Set-Service -StartupType Automatic && Start-Service ssh-agent' as a powershell admin to start ssh-agent"
+    "\nRun: 'Get-Service -Name ssh-agent | Set-Service -StartupType Automatic; Start-Service ssh-agent' as a powershell admin to start ssh-agent"
 )
