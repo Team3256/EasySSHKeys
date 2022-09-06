@@ -17,7 +17,7 @@ def clone_and_modify_git_config(repo_name: str, passwd: str) -> bool:
             f"git@github.com-{NAME_LOWER}:{repo_name}.git",
             (dr := f"{HOME_DIR}\\Documents\\Github\\{NAME}\\{repo_name.split('/')[1]}"),
         ]
-    ).communicate(input=passwd)
+    ).communicate(input=passwd.encode())
     # Update config
     print(f"{dr=}")
     p2 = subprocess.run(["git", "config", "user.name", NAME], cwd=f"{dr}")
