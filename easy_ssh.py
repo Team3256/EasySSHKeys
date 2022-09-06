@@ -7,6 +7,7 @@ import webbrowser
 from shutil import which
 
 
+
 def clone_and_modify_git_config(repo_name: str, passwd: str) -> bool:
     """Clone a repo into ~/Documents/Github/<name> and modify the git config to include name and email."""
     # Clone the repo
@@ -17,9 +18,8 @@ def clone_and_modify_git_config(repo_name: str, passwd: str) -> bool:
             f"git@github.com-{NAME_LOWER}:{repo_name}.git",
             (dr := f"{HOME_DIR}\\Documents\\Github\\{NAME}\\{repo_name.split('/')[1]}"),
         ]
-    ).communicate(input=passwd.encode())
+    ).communicate()
     # Update config
-    print(f"{dr=}")
     p2 = subprocess.run(["git", "config", "user.name", NAME], cwd=f"{dr}")
     p3 = subprocess.run(["git", "config", "user.email", EMAIL], cwd=f"{dr}")
     return any([p2.returncode, p3.returncode])  # returncode == 0 is success
@@ -38,6 +38,12 @@ while True:
     EMAIL = input("Please enter your Github Email (e.g. dylan@starink.com): ")
     COMPUTER_NAME = "ThonkPad2"
     HOME_DIR = os.getenv("UserProfile")
+    # NAME = "AlexanderHOtt"
+    # REAL_NAME = "Alex Ott"
+    # NAME_LOWER = NAME.lower()
+    # EMAIL = "aott01@protonmail.ch"
+    # COMPUTER_NAME = "ThonkPad2"
+    # HOME_DIR = os.getenv("UserProfile")
 
     s = f"""\
     Name: {NAME}
@@ -79,13 +85,12 @@ subprocess.Popen(
 # subprocess.Popen(["ssh-agent", "-s"]).communicate()
 # Add ssh key to ssh-agent
 
-subprocess.run(["ssh-add", f"{HOME_DIR}\\.ssh\\id_rsa_{NAME_LOWER}"])
+# subprocess.run(["ssh-add", f"{HOME_DIR}\\.ssh\\id_rsa_{NAME_LOWER}"])
 
 # Copy public ssh key to clipboard
 subprocess.run(
     f"type {HOME_DIR}\\.ssh\\id_rsa_{NAME_LOWER}.pub | clip",
     shell=True,
-    stdout=subprocess.DEVNULL,
 )
 print("Public ssh key copied to clipboard\n")
 time.sleep(2)
@@ -119,16 +124,26 @@ if (
 Host github.com-{NAME_LOWER}
     Hostname github.com
     User git
-    IdentityFile ~/.ssh/id_rsa_{NAME_LOWER}"""
+    IdentityFile ~/.ssh/id_rsa_{NAME_LOWER}
+"""
         )
 
 # Configure intellij
 input(
-    "Configure Intellij to forget your password\nFile > Settings > Appearance & Behavior > System Settings > Passwords\nSelect 'Do not save, forget passwords after restart', then click 'OK'"
+    "Configure Intellij to forget your password\nFile > Settings > Appearance & Behavior > System Settings > Passwords\nSelect 'Do not save, forget passwords after restart', then click 'OK'\nPress <Enter> to Continue"
 )
 
+# Add github to known_hosts
+if not os.path.isfile(f"{HOME_DIR}\\.ssh\\known_hosts"):
+    with open(f"{HOME_DIR}\\.ssh\\known_hosts", "w") as f:
+        f.write("""\
+github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl
+github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
+github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg=
+""")
+
 # Multi-threaded git clones
-passwd = getpass.getpass("Enter your Github ssh-key password: ")
+# password = getpass.getpass("Enter your Github ssh-key password: ")
 
 threads = []
 for repo in {
@@ -137,12 +152,7 @@ for repo in {
     "Team3256/T-ShirtShooter",
     "Team3256/FRC_Programming_2020",
 }:
-    t = threading.Thread(target=clone_and_modify_git_config, args=(repo, passwd))
-    threads.append(t)
-    t.start()
-
-[t.join() for t in threads]
 
 print(
-    "\nRun: Get-Service -Name ssh-agent | Set-Service -StartupType Automatic && Start-Service ssh-agent' as a powershell admin to start ssh-agent"
+    "\nRun: 'Get-Service -Name ssh-agent | Set-Service -StartupType Automatic; Start-Service ssh-agent' as a powershell admin to start ssh-agent"
 )
