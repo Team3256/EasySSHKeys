@@ -147,10 +147,9 @@ github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAA
 
 threads = []
 for repo in {
+    "Team3256/FRC_Programming_2023",
     "Team3256/FRC_Programming_2022",
-    "Team3256/Alpine",
-    "Team3256/T-ShirtShooter",
-    "Team3256/FRC_Programming_2020",
+    "Team3256/T-ShirtShooter"
 }:
 
 print(
